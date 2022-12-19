@@ -5,6 +5,7 @@ read -p 'Domain: ' DOMAIN
 read -p 'Mail domain: ' MAILDOMAIN
 read -p 'Mail relay: ' MAILRELAY
 read -p 'Mail user (lowercase): ' MAILUSER
+read -p 'DKIM selector: ' SELECTOR
 
 echo -e "\r\nDomain: $DOMAIN\r\nMail domain: $MAILDOMAIN\r\nMail relay: $MAILRELAY\r\nMail user: $MAILUSER"
 
@@ -37,19 +38,19 @@ echo -e "AutoRestart	yes\r\nAutoRestartRate	10/1M\r\nBackground	yes\r\nDNSTimeou
 mkdir -p /etc/opendkim/keys
 chown -R opendkim:opendkim /etc/opendkim
 chmod go-rw /etc/opendkim/keys
-echo -e "*@$DOMAIN	default._domainkey.$DOMAIN\r\n*@*.$DOMAIN	default._domainkey.$DOMAIN" >> /etc/opendkim/signing.table
-echo -e "default._domainkey.$DOMAIN	$DOMAIN:default:/etc/opendkim/keys/$DOMAIN/default.private" >> /etc/opendkim/key.table
+echo -e "*@$DOMAIN	$SELECTOR._domainkey.$DOMAIN\r\n*@*.$DOMAIN	$SELECTOR._domainkey.$DOMAIN" >> /etc/opendkim/signing.table
+echo -e "$SELECTOR._domainkey.$DOMAIN	$DOMAIN:$SELECTOR:/etc/opendkim/keys/$DOMAIN/$SELECTOR.private" >> /etc/opendkim/key.table
 echo -e "127.0.0.1\r\nlocalhost\r\n$MAILRELAY\r\n\r\n.$DOMAIN" >> /etc/opendkim/trusted.hosts
 mkdir /etc/opendkim/keys/$DOMAIN
-opendkim-genkey -b 2048 -d $DOMAIN -D /etc/opendkim/keys/$DOMAIN -s default -v
-chown opendkim:opendkim /etc/opendkim/keys/$DOMAIN/default.private
-chmod 600 /etc/opendkim/keys/$DOMAIN/default.private
+opendkim-genkey -b 2048 -d $DOMAIN -D /etc/opendkim/keys/$DOMAIN -s $SELECTOR -v
+chown opendkim:opendkim /etc/opendkim/keys/$DOMAIN/$SELECTOR.private
+chmod 600 /etc/opendkim/keys/$DOMAIN/$SELECTOR.private
 
 #Read DKIM record, pause to allow user to post records, test dkim, pause to read opendkim-testkey output
-cat /etc/opendkim/keys/$DOMAIN/default.txt
+cat /etc/opendkim/keys/$DOMAIN/$SELECTOR.txt
 echo -e "\r\nPlease publish the following DNS records:\r\nroot A\r\nmail A\r\nMX\r\nDKIM\r\nSPF\r\nDMARC\r\n\r\n"
 read -p "Press any key to continue... " -n1 -s
-opendkim-testkey -d $DOMAIN -s default -vvv
+opendkim-testkey -d $DOMAIN -s $SELECTOR -vvv
 read -p "Press any key to continue... " -n1 -s
 
 #Continue OpenDKIM setup
