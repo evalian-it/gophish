@@ -63,7 +63,6 @@ echo -e "milter_default_action = accept\r\nmilter_protocol = 6\r\nsmtpd_milters 
 #Courier-IMAP setup
 DEBIAN_FRONTEND=noninteractive apt-get install courier-imap -y
 imapd start && imapd-ssl start
-service courier-authdaemon start
 systemctl enable courier-authdaemon
 
 #Gophish setup
