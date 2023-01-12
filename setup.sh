@@ -88,13 +88,13 @@ apt-get install certbot -y
 certbot certonly -d $DOMAIN -d $MAILDOMAIN --manual --preferred-challenges dns
 
 #Postfix, Courier-IMAP, and Gophish SSL setup
-sed -i 's/127.0.0.1/0.0.0.0/g' config.json
-sed -i 's/80/443/g' config.json
-sed -i 's/false/true/g' config.json
-sed -i "s/gophish_admin.crt/\/etc\/letsencrypt\/live\/$DOMAIN\/fullchain.pem/g" config.json
-sed -i "s/gophish_admin.key/\/etc\/letsencrypt\/live\/$DOMAIN\/privkey.pem/g" config.json
-sed -i "s/example.crt/\/etc\/letsencrypt\/live\/$DOMAIN\/fullchain.pem/g" config.json
-sed -i "s/example.key/\/etc\/letsencrypt\/live\/$DOMAIN\/privkey.pem/g" config.json
+sed -i 's/127.0.0.1/0.0.0.0/g' /opt/gophish/config.json
+sed -i 's/80/443/g' /opt/gophish/config.json
+sed -i 's/false/true/g' /opt/gophish/config.json
+sed -i "s/gophish_admin.crt/\/etc\/letsencrypt\/live\/$DOMAIN\/fullchain.pem/g" /opt/gophish/config.json
+sed -i "s/gophish_admin.key/\/etc\/letsencrypt\/live\/$DOMAIN\/privkey.pem/g" /opt/gophish/config.json
+sed -i "s/example.crt/\/etc\/letsencrypt\/live\/$DOMAIN\/fullchain.pem/g" /opt/gophish/config.json
+sed -i "s/example.key/\/etc\/letsencrypt\/live\/$DOMAIN\/privkey.pem/g" /opt/gophish/config.json
 sed -i "s/smtpd_tls_cert_file=\/etc\/ssl\/certs\/ssl-cert-snakeoil.pem/smtpd_tls_cert_file=\/etc\/letsencrypt\/live\/$DOMAIN\/fullchain.pem/g" /etc/postfix/main.cf
 sed -i "s/smtpd_tls_key_file=\/etc\/ssl\/private\/ssl-cert-snakeoil.key/smtpd_tls_key_file=\/etc\/letsencrypt\/live\/$DOMAIN\/privkey.pem/g" /etc/postfix/main.cf
 sed -i "s/TLS_CERTFILE=\/etc\/courier\/imapd.pem/TLS_CERTFILE=\/etc\/letsencrypt\/live\/$DOMAIN\/fullchain.pem/g" /etc/courier/imapd-ssl
