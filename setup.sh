@@ -68,12 +68,12 @@ systemctl enable courier-authdaemon
 #Gophish setup
 mkdir /opt/gophish
 wget -O /opt/gophish/gophish-v0.12.1-linux-64bit.zip https://github.com/gophish/gophish/releases/download/v0.12.1/gophish-v0.12.1-linux-64bit.zip
-apt-get install unzip
+apt-get install unzip -y
 unzip /opt/gophish/gophish-v0.12.1-linux-64bit.zip -d /opt/gophish
 chmod +x /opt/gophish/gophish
 
 #Reset Gophish admin password to 'gophish'
-apt-get install sqlite3 libsqlite3-dev
+apt-get install sqlite3 libsqlite3-dev -y
 sqlite3 /opt/gophish/gophish.db 'update users set hash="$2a$10$IYkPp0.QsM81lYYPrQx6W.U6oQGw7wMpozrKhKAHUBVL4mkm/EvAS" where username="admin";'
 
 #Setup Gophish as service
