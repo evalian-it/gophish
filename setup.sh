@@ -72,16 +72,17 @@ apt-get install unzip -y
 unzip /opt/gophish/gophish-v0.12.1-linux-64bit.zip -d /opt/gophish
 chmod +x /opt/gophish/gophish
 
-#Reset Gophish admin password to 'gophish'
-apt-get install sqlite3 libsqlite3-dev -y
-sqlite3 /opt/gophish/gophish.db 'update users set hash="$2a$10$IYkPp0.QsM81lYYPrQx6W.U6oQGw7wMpozrKhKAHUBVL4mkm/EvAS" where username="admin";'
-
 #Setup Gophish as service
 wget -O /lib/systemd/system/gophish.service https://raw.githubusercontent.com/evalian-it/gophish/main/gophish.service
 wget -O /root/gophish.sh https://raw.githubusercontent.com/evalian-it/gophish/main/gophish.sh
 chmod +x /root/gophish.sh
 systemctl daemon-reload
 systemctl enable gophish.service
+
+#Reset Gophish admin password to 'gophish'
+systemctl start gophish
+apt-get install sqlite3 libsqlite3-dev -y
+sqlite3 /opt/gophish/gophish.db 'update users set hash="$2a$10$IYkPp0.QsM81lYYPrQx6W.U6oQGw7wMpozrKhKAHUBVL4mkm/EvAS" where username="admin";'
 
 #LetsEncrypt Certbot setup
 apt-get install certbot -y
@@ -103,7 +104,7 @@ sed -i 's/IMAP_TLS_REQUIRED=0/IMAP_TLS_REQUIRED=1/g' /etc/courier/imapd-ssl
 
 #ufw setup
 sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
-ufw allow 22/tcp && ufw allow 25/tcp && ufw allow 443/tcp && ufw allow 993/tcp && ufw allow 3333/tcp && ufw enable
+ufw allow 22/tcp && ufw allow 25/tcp && ufw allow 443/tcp && ufw allow 993/tcp && ufw allow 3333/tcp && ufw --force enable
 
 #Ask user to reboot
 echo -e "\r\n\r\nPlease reboot the system\r\n"
